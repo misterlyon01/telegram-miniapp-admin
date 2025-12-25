@@ -20,7 +20,7 @@ const tg = Telegram.WebApp;
 tg.expand();
 
 const adminId = tg.initDataUnsafe.user.id;
-const API = "http://127.0.0.1:10000"; // LOCAL POUR TEST
+const API = "https://telegram-miniapp-admin.onrender.com/"; // LOCAL POUR TEST
 
 fetch(`${API}/orders?tg_id=${adminId}`)
 .then(r => r.json())
