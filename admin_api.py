@@ -1,11 +1,22 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, send_from_directory
+import os
 import sqlite3
 import requests
 
 BOT_TOKEN = "7975345597:AAH_CJ5aT8W_bZvfk5tCwgheDerncht5jvE"
 ADMIN_ID = 5869177453
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(BASE_DIR, "index.html")
+
+@app.route("/index.html")
+def serve_index_html():
+    return send_from_directory(BASE_DIR, "index.html")
+
 
 def send_msg(uid, text):
     requests.post(
