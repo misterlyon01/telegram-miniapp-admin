@@ -1,60 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
+
+<!-- CRITIQUE POUR IPHONE -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Panel Admin</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
-body { font-family: Arial; padding:10px; }
-.card { border:1px solid #ccc; margin:8px; padding:8px; }
-button { margin-right:6px; }
+:root {
+  --bg: var(--tg-theme-bg-color, #ffffff);
+  --text: var(--tg-theme-text-color, #000000);
+  --btn: var(--tg-theme-button-color, #2a9df4);
+  --btn-text: var(--tg-theme-button-text-color, #ffffff);
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.line {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.accept {
+  background: #2ecc71;
+  color: white;
+}
+
+.refuse {
+  background: #e74c3c;
+  color: white;
+}
 </style>
 </head>
+
 <body>
 
-<h3>📊 Panel Admin</h3>
-<div id="orders">Chargement...</div>
+<h2>📊 Panel Admin</h2>
+<div id="orders">Chargement…</div>
 
 <script>
 const tg = Telegram.WebApp;
 tg.expand();
 
-const adminId = tg.initDataUnsafe.user.id;
-const API = "https://telegram-miniapp-admin.onrender.com/"; // LOCAL POUR TEST
+const adminId = tg.initDataUnsafe?.user?.id;
+const API = "https://telegram-miniapp-admin.onrender.com";
 
 fetch(`${API}/orders?tg_id=${adminId}`)
 .then(r => r.json())
 .then(data => {
-  document.getElementById("orders").innerHTML =
-    data.map(o => `
-      <div class="card">
-        <b>#${o[0]}</b><br>
-        ${o[2]}<br>
-        Total: ${o[3]} €<br>
-        Statut: ${o[8]}<br><br>
-        <button onclick="accept(${o[0]})">✅</button>
-        <button onclick="refuse(${o[0]})">❌</button>
+  if (!data.length) {
+    document.getElementById("orders").innerHTML = "Aucune commande";
+    return;
+  }
+
+  document.getElementById("orders").innerHTML = data.map(o => `
+    <div class="card">
+      <div class="line"><b>#${o[0]}</b></div>
+      <div class="line">${o[2]}</div>
+      <div class="line">💰 Total : ${o[3]} €</div>
+      <div class="line">⏰ ${o[7]}</div>
+      <div class="line">📞 ${o[6]}</div>
+      <div class="actions">
+        <button class="accept" onclick="accept(${o[0]})">✅ Accepter</button>
+        <button class="refuse" onclick="refuse(${o[0]})">❌ Refuser</button>
       </div>
-    `).join("");
+    </div>
+  `).join("");
 });
 
-function accept(id){
-  fetch(`${API}/accept`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({id:id,tg_id:adminId})
-  }).then(()=>location.reload());
+function accept(id) {
+  fetch(`${API}/accept`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({id:id, tg_id:adminId})
+  }).then(() => location.reload());
 }
 
-function refuse(id){
-  fetch(`${API}/refuse`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({id:id,tg_id:adminId})
-  }).then(()=>location.reload());
+function refuse(id) {
+  fetch(`${API}/refuse`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({id:id, tg_id:adminId})
+  }).then(() => location.reload());
 }
 </script>
 
 </body>
 </html>
-
