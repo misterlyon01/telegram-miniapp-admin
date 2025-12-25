@@ -7,15 +7,17 @@ BOT_TOKEN = "7975345597:AAH_CJ5aT8W_bZvfk5tCwgheDerncht5jvE"
 ADMIN_ID = 5869177453
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__, static_folder=BASE_DIR, static_url_path="")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="/static")
 
 @app.route("/")
-def serve_index():
-    return send_from_directory(BASE_DIR, "index.html")
+def home():
+    return send_from_directory(STATIC_DIR, "index.html")
 
 @app.route("/index.html")
-def serve_index_html():
-    return send_from_directory(BASE_DIR, "index.html")
+def index():
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 def send_msg(uid, text):

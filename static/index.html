@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Panel Admin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body { font-family: Arial; padding:10px; }
+.card { border:1px solid #ccc; margin:8px; padding:8px; }
+button { margin-right:6px; }
+</style>
+</head>
+<body>
+
+<h3>📊 Panel Admin</h3>
+<div id="orders">Chargement...</div>
+
+<script>
+const tg = Telegram.WebApp;
+tg.expand();
+
+const adminId = tg.initDataUnsafe.user.id;
+const API = "https://telegram-miniapp-admin.onrender.com/"; // LOCAL POUR TEST
+
+fetch(`${API}/orders?tg_id=${adminId}`)
+.then(r => r.json())
+.then(data => {
+  document.getElementById("orders").innerHTML =
+    data.map(o => `
+      <div class="card">
+        <b>#${o[0]}</b><br>
+        ${o[2]}<br>
+        Total: ${o[3]} €<br>
+        Statut: ${o[8]}<br><br>
+        <button onclick="accept(${o[0]})">✅</button>
+        <button onclick="refuse(${o[0]})">❌</button>
+      </div>
+    `).join("");
+});
+
+function accept(id){
+  fetch(`${API}/accept`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({id:id,tg_id:adminId})
+  }).then(()=>location.reload());
+}
+
+function refuse(id){
+  fetch(`${API}/refuse`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({id:id,tg_id:adminId})
+  }).then(()=>location.reload());
+}
+</script>
+
+</body>
+</html>
+
