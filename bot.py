@@ -299,16 +299,16 @@ async def panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
 
-    kb = [[InlineKeyboardButton(
+    keyboard = [[InlineKeyboardButton(
         "🖥️ Panel Admin",
         web_app=WebAppInfo(
-            url="https://example.com"  # remplacé après hébergement
+            url="https://telegram-miniapp-admin.onrender.com"  # remplacé après hébergement
         )
     )]]
 
     await update.message.reply_text(
-        "Accès au panel admin :",
-        reply_markup=InlineKeyboardMarkup(kb)
+        "Accès au nouveau panel admin :",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
 # ================= APP =================
