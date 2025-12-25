@@ -3,77 +3,106 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- CRITIQUE POUR IPHONE -->
+<!-- CRITIQUE POUR TELEGRAM + IPHONE -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Panel Admin</title>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root {
   --bg: var(--tg-theme-bg-color, #ffffff);
+  --card: var(--tg-theme-secondary-bg-color, #f3f4f6);
   --text: var(--tg-theme-text-color, #000000);
-  --btn: var(--tg-theme-button-color, #2a9df4);
-  --btn-text: var(--tg-theme-button-text-color, #ffffff);
+  --sub: var(--tg-theme-hint-color, #6b7280);
+  --accept: #22c55e;
+  --refuse: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  padding: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  padding: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
 
-h2 {
+header {
   text-align: center;
-  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 14px;
 }
 
 .card {
-  background: rgba(0,0,0,0.05);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
 }
 
-.line {
-  margin: 4px 0;
+.row {
+  display: flex;
+  justify-content: space-between;
   font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.label {
+  color: var(--sub);
+}
+
+.value {
+  font-weight: 600;
+}
+
+.products {
+  font-size: 14px;
+  margin: 8px 0;
 }
 
 .actions {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 button {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .accept {
-  background: #2ecc71;
+  background: var(--accept);
   color: white;
 }
 
 .refuse {
-  background: #e74c3c;
+  background: var(--refuse);
   color: white;
+}
+
+.empty {
+  text-align: center;
+  color: var(--sub);
+  margin-top: 40px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>📊 Panel Admin</h2>
+<header>📊 Panel Admin</header>
+
 <div id="orders">Chargement…</div>
 
 <script>
@@ -87,17 +116,35 @@ fetch(`${API}/orders?tg_id=${adminId}`)
 .then(r => r.json())
 .then(data => {
   if (!data.length) {
-    document.getElementById("orders").innerHTML = "Aucune commande";
+    document.getElementById("orders").innerHTML =
+      '<div class="empty">Aucune commande en attente</div>';
     return;
   }
 
   document.getElementById("orders").innerHTML = data.map(o => `
     <div class="card">
-      <div class="line"><b>#${o[0]}</b></div>
-      <div class="line">${o[2]}</div>
-      <div class="line">💰 Total : ${o[3]} €</div>
-      <div class="line">⏰ ${o[7]}</div>
-      <div class="line">📞 ${o[6]}</div>
+      <div class="row">
+        <span class="label">Commande</span>
+        <span class="value">#${o[0]}</span>
+      </div>
+
+      <div class="products">${o[2]}</div>
+
+      <div class="row">
+        <span class="label">Total</span>
+        <span class="value">${o[3]} €</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Horaire</span>
+        <span class="value">${o[7]}</span>
+      </div>
+
+      <div class="row">
+        <span class="label">Téléphone</span>
+        <span class="value">${o[6]}</span>
+      </div>
+
       <div class="actions">
         <button class="accept" onclick="accept(${o[0]})">✅ Accepter</button>
         <button class="refuse" onclick="refuse(${o[0]})">❌ Refuser</button>
